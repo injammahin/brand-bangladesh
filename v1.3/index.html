@@ -90,7 +90,7 @@
   <!-- ============ NAV ============ -->
   <nav class="mainnav" id="mainnav">
     <div class="container nav-inner">
-      <a href="#" class="nav-mini" aria-label="Home"><svg><use href="#monument" /></svg></a>
+      <a href="#" class="nav-mini" aria-label="Brand Bangladesh home"><img src="logo.png" alt="Brand Bangladesh" /></a>
       <div class="nav-links">
         <a href="#" class="active" data-bn="প্রচ্ছদ">Home</a>
         <a href="#" data-bn="বাংলাদেশ">Bangladesh</a>
@@ -233,30 +233,30 @@
           </div>
         </div>
 
-        <div class="acc-panel reveal">
-          <div class="acc-stats">
-            <div><strong data-bn="২৪">24</strong><span data-bn="খবর নজরে রাখছি">stories being tracked</span></div>
-            <div><strong data-bn="৯">9</strong><span data-bn="সরকারি প্রতিশ্রুতি পর্যবেক্ষণে">government promises monitored</span></div>
-            <div><strong data-bn="৬১%">61%</strong><span data-bn="রিপোর্ট করা সমস্যার সমাধান">of reported problems resolved</span></div>
-            <div><strong data-bn="১,৫৫২">1,552</strong><span data-bn="এ মাসে পাঠকের ভোট">reader votes this month</span></div>
+        <div class="acc-wrap reveal">
+          <div class="acc-figures">
+            <span><b data-bn="২৪">24</b> <span data-bn="খবর নজরে">stories tracked</span></span>
+            <span><b data-bn="৯">9</b> <span data-bn="প্রতিশ্রুতি পর্যবেক্ষণে">promises monitored</span></span>
+            <span><b data-bn="৬১%">61%</b> <span data-bn="সমস্যার সমাধান">of problems resolved</span></span>
+            <span><b data-bn="১,৫৫২">1,552</b> <span data-bn="এ মাসে পাঠকের ভোট">reader votes this month</span></span>
           </div>
 
-          <div class="account-grid">
-            <div class="acc-main">
-              <div id="trackerList"></div>
-              <div id="promiseList" hidden></div>
-            </div>
+          <div class="trk-grid" id="trackerList"></div>
+          <div class="trk-grid" id="promiseList" hidden></div>
 
-            <aside class="problems">
-              <span class="eyebrow" data-bn="জনসমস্যা ট্র্যাকার">Public Problem Tracker</span>
-              <h3 data-bn="যে সমস্যাগুলোর দিকে নজর রাখছি">Problems we're watching</h3>
-              <div id="problemList"></div>
-              <button class="btn btn-dark btn-block js-report" data-type="problem"><i class="ph-light ph-plus-circle"></i> <span data-bn="সমস্যা জানান">Report a problem</span></button>
-            </aside>
+          <div class="acc-problems">
+            <div class="ap-head">
+              <div>
+                <span class="eyebrow" data-bn="জনসমস্যা ট্র্যাকার">Public Problem Tracker</span>
+                <h3 data-bn="যে সমস্যাগুলোর দিকে নজর রাখছি">Problems we're watching</h3>
+              </div>
+              <button class="btn btn-dark js-report" data-type="problem"><i class="ph-light ph-plus-circle"></i> <span data-bn="সমস্যা জানান">Report a problem</span></button>
+            </div>
+            <div class="ap-list" id="problemList"></div>
           </div>
         </div>
       </div>
-    </section>
+</section>
 
     <!-- ============ 5. LOCAL EYES ============ -->
     <section class="local" id="local">

@@ -482,31 +482,35 @@
 
   /* ---------------- ACCOUNTABILITY ---------------- */
   function renderTracker() {
-    $('#trackerList').innerHTML = DATA.tracker.map((tr) => `
-      <article class="track-card">
-        <div class="tc-top">
-          <span class="tag">${t(tr.tag)}</span>
-          <span class="tc-days"><i class="ph-light ph-eye"></i>
-            ${L(`Tracking for ${tr.days} days`, `${num(tr.days)} দিন ধরে নজরে`)}
-          </span>
-        </div>
-        <h3>${t(tr.title)}</h3>
-        <ol class="steps">
-          ${tr.steps.map((s) => `<li class="${s.s}"><span class="dot"></span><strong>${t(s.l)}</strong><small>${t(s.d)}</small></li>`).join('')}
-        </ol>
-      </article>`).join('');
+    $('#trackerList').innerHTML = DATA.tracker.map((tr) => {
+      const now = tr.steps.find((s) => s.s === 'now') || tr.steps[tr.steps.length - 1];
+      const step = tr.steps.indexOf(now) + 1;
+      return `
+        <article class="trk">
+          <div class="trk-top">
+            <span class="tag">${t(tr.tag)}</span>
+            <span class="trk-days"><i class="ph-light ph-eye"></i> ${L(`${tr.days} days`, `${num(tr.days)} দিন`)}</span>
+          </div>
+          <h3>${t(tr.title)}</h3>
+          <div class="trk-bar">${tr.steps.map((s) => `<i class="${s.s}" title="${t(s.l)}"></i>`).join('')}</div>
+          <div class="trk-now">
+            <span><b>${L('Now', 'এখন')}:</b> ${t(now.l)} · ${t(now.d)}</span>
+            <span>${num(step)}/${num(tr.steps.length)}</span>
+          </div>
+        </article>`;
+    }).join('');
   }
 
   function renderPromises() {
     $('#promiseList').innerHTML = DATA.promises.map((p) => `
-      <article class="promise ${p.status}">
-        <div class="pr-top">
+      <article class="trk ${p.status}">
+        <div class="trk-top">
           <span class="pr-owner"><i class="ph-light ph-bank"></i> ${t(p.owner)}</span>
           <span class="status ${p.status}">${t(DATA.promiseLabel[p.status])}</span>
         </div>
         <h3>${t(p.title)}</h3>
         <div class="pr-bar"><i style="width:${p.progress}%"></i></div>
-        <div class="pr-meta"><span><strong>${num(p.progress)}%</strong> ${L('delivered', 'সম্পন্ন')}</span><span>${t(p.due)}</span></div>
+        <div class="trk-now"><span><b>${num(p.progress)}%</b> ${L('delivered', 'সম্পন্ন')}</span><span>${t(p.due)}</span></div>
       </article>`).join('');
   }
 
