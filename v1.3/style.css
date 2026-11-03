@@ -1091,3 +1091,108 @@ body.lang-bn .tk-kicker { letter-spacing: 0; font-size: 13px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* =========================================================
+   UNIFIED EDITORIAL FLOW
+   Sections sit directly on the page (no cards, no shadows),
+   separated only by the section-head rule, with one rhythm.
+   ========================================================= */
+:root { --gap: 72px; --col: 40px; }
+
+.front { padding: 28px 0 0; }
+.brief, .five, .account, .local, .mypress, .knowledge, .smart, .talk { padding: var(--gap) 0 0; }
+.club { padding: var(--gap) 0 96px; }
+.sec-head { margin-bottom: 36px; }
+
+/* Panels become plain layout wrappers */
+.brief-panel, .five-panel, .acc-panel, .mp-panel, .kn-panel, .smart-panel, .talk-panel {
+  background: none; border: 0; border-radius: 0; box-shadow: none; padding: 0;
+}
+
+/* 2 · Briefing — player row over ruled columns, flush with the container */
+.brief-panel { overflow: hidden; }
+.bp-player { padding: 0 0 24px; border-bottom: 1px solid var(--line); }
+.bp-list { margin: 0 -21px 0 -20px; }
+.bp-list li { padding: 24px 20px 26px; }
+.bp-foot { padding: 16px 0 0; background: none; }
+
+/* 3 · Five That Matter */
+.five-panel { overflow: visible; }
+.five-panel::after { right: -60px; bottom: -40px; }
+
+/* 4 · Accountability */
+.acc-stats { background: none; border-top: 1px solid var(--line); margin-bottom: 0; }
+.acc-stats > div { padding: 22px 28px; }
+.acc-stats > div:first-child { padding-left: 0; }
+.acc-main { padding: 32px var(--col) 0 0; }
+.problems { padding: 32px 0 0 var(--col); }
+
+/* 5 · Local Eyes invitation — a ruled strip, not a card */
+.le-cta { margin-top: 44px; padding: 24px 0; border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); border-radius: 0; box-shadow: none; background: none; }
+.le-cta::after { right: 200px; }
+
+/* 6 · My Press */
+.mp-settings { padding: 0 var(--col) 0 0; background: none; }
+.mp-bar { padding: 0 0 16px var(--col); }
+#mpFeed { padding: 4px 0 0 var(--col); min-height: 0; }
+
+/* 7 · Knowledge */
+.kn-panel { overflow: visible; }
+.kn-panel::after { right: -40px; bottom: -40px; }
+.kn-feature { padding: 0 var(--col) 0 0; }
+.kn-side { padding: 0 0 0 var(--col); }
+
+/* 8 · More than a newspaper */
+.sp-col { padding: 0 32px; }
+.sp-col:first-child { padding-left: 0; }
+.sp-col:last-child { padding-right: 0; }
+
+/* 9 · Talk to the newsroom */
+.talk-col { padding: 0 var(--col) 0 0; }
+.talk-col + .talk-col { padding: 0 0 0 var(--col); }
+.talk-foot { margin-top: 36px; background: none; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.talk-foot > span:first-child { justify-content: flex-start; padding-left: 0; }
+.talk-foot > span:last-child { justify-content: flex-end; padding-right: 0; }
+
+/* 10 · Readers' Club — opens with the same rule as every section head */
+.club-inner {
+  padding: 22px 0 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; box-shadow: none; background: none; overflow: visible;
+}
+.club-inner::before { content: ""; position: absolute; top: -2px; left: 0; width: 72px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, var(--teal), var(--gold-2)); }
+.club-form { box-shadow: none; border-color: var(--line-2); border-radius: 4px; }
+.club-form .btn { border-radius: 4px; }
+.poll { box-shadow: none; }
+
+/* Hero briefing card — light frame only */
+.quick-brief { box-shadow: none; }
+
+@media (max-width: 1080px) {
+  .acc-stats > div:nth-child(3) { padding-left: 0; }
+  .acc-main { padding: 32px 0 0; }
+  .problems { padding: 32px 0 0; margin-top: 32px; }
+  .mp-settings { padding: 0 0 32px; }
+  .mp-bar { padding: 28px 0 16px; }
+  #mpFeed { padding: 4px 0 0; }
+  .kn-feature { padding: 0 0 32px; }
+  .kn-side { padding: 32px 0 0; }
+  .sp-col, .sp-col:first-child, .sp-col:last-child { padding: 28px 0; }
+  .sp-col:first-child { padding-top: 0; }
+  .talk-col, .talk-col + .talk-col { padding: 28px 0 0; }
+  .talk-col:first-child { padding-top: 0; padding-bottom: 28px; }
+  .club-inner { padding-top: 22px; }
+}
+@media (max-width: 720px) {
+  :root { --gap: 56px; }
+  .club { padding-bottom: 72px; }
+  .acc-stats > div { padding: 16px 12px 16px 0; }
+  .acc-stats > div:nth-child(2n) { padding-left: 16px; }
+  .acc-main, .problems { padding: 28px 0 0; }
+  .mp-settings { padding: 0 0 28px; }
+  .mp-bar { padding: 24px 0 14px; }
+  #mpFeed { padding: 4px 0 0; }
+  .kn-feature, .kn-side { padding-left: 0; padding-right: 0; }
+  .talk-col { padding-left: 0; padding-right: 0; }
+  .talk-foot > span, .talk-foot > span:first-child, .talk-foot > span:last-child { justify-content: flex-start; padding: 14px 0; }
+  .le-cta { padding: 22px 0; }
+  .bp-player { padding: 0 0 20px; }
+}
