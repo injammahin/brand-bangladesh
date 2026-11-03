@@ -1196,3 +1196,34 @@ body.lang-bn .tk-kicker { letter-spacing: 0; font-size: 13px; }
   .le-cta { padding: 22px 0; }
   .bp-player { padding: 0 0 20px; }
 }
+
+/* =========================================================
+   SECTION MARKERS
+   Clear chapter breaks without cards: generous spacing,
+   a strong ink rule with a brand accent, and a section number.
+   ========================================================= */
+:root { --gap: 112px; }
+main { counter-reset: sec; }
+
+.sec-head, .club-inner { counter-increment: sec; }
+.sec-head { border-top: 2px solid var(--ink); padding-top: 26px; margin-bottom: 40px; }
+.sec-head::before, .club-inner::before { top: -2px; width: 96px; height: 4px; border-radius: 0; background: linear-gradient(90deg, var(--teal), var(--gold-2)); }
+.sec-head::after, .club-inner::after {
+  content: counter(sec, decimal-leading-zero); position: absolute; top: 16px; right: 0;
+  font-family: 'Newsreader', serif; font-size: 15px; font-weight: 500; letter-spacing: .06em; color: var(--muted);
+}
+body.lang-bn .sec-head::after, body.lang-bn .club-inner::after { content: "০" counter(sec, bengali); font-family: 'Noto Serif Bengali', serif; letter-spacing: 0; }
+.sec-head .stack { padding-right: 48px; }
+.club-inner { border-top: 2px solid var(--ink); padding-top: 26px; }
+
+/* Keep right-hand controls clear of the number */
+.sec-head > :last-child:not(.stack) { margin-top: 28px; }
+
+/* Lines that close a section stay light so the next rule reads as the break */
+.le-cta, .talk-foot { border-bottom: 0; }
+
+@media (max-width: 720px) {
+  :root { --gap: 80px; }
+  .sec-head { margin-bottom: 30px; }
+  .sec-head > :last-child:not(.stack) { margin-top: 0; }
+}
