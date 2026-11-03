@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brand Bangladesh — News that matters</title>
+  <meta name="description" content="An independent national daily — news, technology, AI, public service and community." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="is-loading">
+
+  <!-- ============ SVG SPRITE (Smriti Soudho mark — brand colours) ============ -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="monument" viewBox="0 0 120 120">
+      <polygon fill="#D71920" points="14,112 48,56 36,112" />
+      <polygon fill="#F38020" points="38,112 55,32 52,112" />
+      <polygon fill="#FBC111" points="54,112 58,24 61,112" />
+      <polygon fill="#0E5B5C" points="63,112 60,12 65,12 69,112" />
+      <polygon fill="#141414" points="68,26 84,58 71,62" />
+      <polygon fill="#EE1B5B" points="71,66 88,62 104,112 72,112" />
+      <polygon fill="#A4CB3A" points="66,4 88,52 84,54 67,18" />
+    </symbol>
+  </svg>
+
+  <!-- ============ LOADER ============ -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader-inner">
+      <svg class="loader-mark" viewBox="0 0 120 120">
+        <polygon class="lp lp1" fill="#D71920" points="14,112 48,56 36,112" />
+        <polygon class="lp lp2" fill="#F38020" points="38,112 55,32 52,112" />
+        <polygon class="lp lp3" fill="#FBC111" points="54,112 58,24 61,112" />
+        <polygon class="lp lp4" fill="#0E5B5C" points="63,112 60,12 65,12 69,112" />
+        <polygon class="lp lp5" fill="#141414" points="68,26 84,58 71,62" />
+        <polygon class="lp lp6" fill="#EE1B5B" points="71,66 88,62 104,112 72,112" />
+        <polygon class="lp lp7" fill="#A4CB3A" points="66,4 88,52 84,54 67,18" />
+      </svg>
+      <div class="loader-dots"><i></i><i></i><i></i></div>
+    </div>
+  </div>
+
+  <!-- ============ TOP BAR ============ -->
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="tb-left">
+        <span id="today"></span>
+        <span class="dot hide-sm"></span>
+        <span class="hide-sm" id="bdate"></span>
+        <span class="dot hide-sm"></span>
+        <span class="hide-sm"><i class="ph-light ph-clock"></i> <span id="clock"></span></span>
+      </div>
+      <div class="tb-right">
+        <a href="#" class="hide-sm"><i class="ph-light ph-newspaper"></i> <span data-bn="ই-পেপার">E-Paper</span></a>
+        <a href="#talk" class="hide-sm"><i class="ph-light ph-headset"></i> <span data-bn="হেল্পলাইন">Helpline</span></a>
+        <div class="lang-switch" id="langSwitch" data-active="en">
+          <span class="pill"></span>
+          <button data-lang="en" class="active">EN</button>
+          <button data-lang="bn">বাং</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="masthead">
+    <div class="container mast-inner">
+      <a class="brand" href="#" id="brand" aria-label="Brand Bangladesh home">
+        <img src="logo.png" alt="Brand Bangladesh" />
+      </a>
+      <button class="search-field" id="openSearch">
+        <i class="ph-light ph-magnifying-glass"></i>
+        <span data-bn="খবর খুঁজুন বা সহকারীকে জিজ্ঞেস করুন…">Search the news or ask the assistant…</span>
+        <kbd>/</kbd>
+      </button>
+      <div class="mast-actions">
+        <button class="btn btn-ghost" id="headerListen"><i class="ph-light ph-headphones"></i> <span data-bn="শুনুন">Listen</span></button>
+        <a href="#mypress" class="btn btn-ghost hide-sm"><i class="ph-light ph-user-circle"></i> <span data-bn="সাইন ইন">Sign in</span></a>
+        <a href="#club" class="btn btn-brand"><span data-bn="ক্লাবে যোগ দিন">Join the club</span></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ NAV ============ -->
+  <nav class="mainnav" id="mainnav">
+    <div class="container nav-inner">
+      <a href="#" class="nav-mini" aria-label="Brand Bangladesh home"><img src="logo.png" alt="Brand Bangladesh" /></a>
+      <div class="nav-links">
+        <a href="#" class="active" data-bn="প্রচ্ছদ">Home</a>
+        <a href="#" data-bn="বাংলাদেশ">Bangladesh</a>
+        <a href="#" data-bn="বিশ্ব">World</a>
+        <a href="#" data-bn="অর্থনীতি">Economy</a>
+        <a href="#" data-bn="প্রযুক্তি">Technology</a>
+        <a href="#" data-bn="সংস্কৃতি">Culture</a>
+        <a href="#" data-bn="খেলা">Sports</a>
+        <a href="#" data-bn="মতামত">Opinion</a>
+        <a href="#local" data-bn="লোকাল আইজ">Local Eyes</a>
+        <a href="#knowledge" data-bn="জ্ঞান ও শিক্ষা">Knowledge</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ TICKER ============ -->
+  <div class="ticker">
+    <div class="container ticker-inner">
+      <span class="tk-label"><span class="pulse"></span><span data-bn="সর্বশেষ">Live</span></span>
+      <div class="tk-viewport"><div class="tk-track" id="tickerTrack"></div></div>
+    </div>
+  </div>
+
+  <main>
+    <!-- ============ HERO · TIME-FIRST BRIEFING ============ -->
+    <section class="hero" id="brief">
+      <div class="container">
+        <p class="greet reveal"><span id="greet"></span> · <span data-bn="আজকের খবর আপনার সময়ে">today's news, on your time</span></p>
+        <div class="hero-line reveal">
+          <h1 data-bn="আজকের খবর পড়ুন">Catch up on today in</h1>
+          <div class="time-pick" id="timeSeg" data-i="0" role="tablist">
+            <button class="time-card active" data-time="60" role="tab"><b data-bn="৬০">60</b> <span data-bn="সেকেন্ড">sec</span></button>
+            <button class="time-card" data-time="180" role="tab"><b data-bn="৩">3</b> <span data-bn="মিনিট">min</span></button>
+            <button class="time-card" data-time="300" role="tab"><b data-bn="৫">5</b> <span data-bn="মিনিট">min</span></button>
+          </div>
+        </div>
+
+        <div class="player reveal" style="--d:100ms">
+          <div class="pl-side">
+            <div class="pl-now">
+              <button class="bp-play" id="bpPlay" aria-label="Listen to briefing"><i class="ph-fill ph-play"></i></button>
+              <div>
+                <span class="bp-label" id="bpLabel"></span>
+                <h3 class="bp-title" id="bpTitle"></h3>
+              </div>
+            </div>
+            <div class="bp-progress"><i id="bpBar"></i></div>
+            <div class="bp-ctrl">
+              <button class="bp-btn" id="bpPrev" aria-label="Previous story"><i class="ph-light ph-skip-back"></i></button>
+              <button class="bp-btn" id="bpNext" aria-label="Next story"><i class="ph-light ph-skip-forward"></i></button>
+              <button class="bp-mic" id="bpMic"><i class="ph-light ph-microphone"></i> <span id="micLabel">Voice commands</span></button>
+            </div>
+            <p class="bp-hint" id="bpHint"></p>
+            <button class="pl-listen" id="laListen"><i class="ph-light ph-headphones"></i> <span data-bn="হাত ছাড়াই শুনুন—বলুন “পরের খবর”">Listen hands-free — just say “next”</span></button>
+          </div>
+          <ol class="bp-list" id="bpList"></ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TOP STORIES ============ -->
+    <section class="front" id="top">
+      <div class="container">
+        <div class="row-head reveal">
+          <h2 data-bn="আজকের প্রধান খবর">Top stories</h2>
+          <a href="#" class="link-arrow"><span data-bn="সব খবর">All stories</span> <i class="ph-light ph-arrow-right"></i></a>
+        </div>
+        <div class="front-grid">
+          <article class="lead-story reveal" id="leadStory"></article>
+          <div class="side-stories reveal" style="--d:120ms" id="sideStories"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 01 · FIVE THAT MATTER ============ -->
+    <section class="sec" id="five">
+      <div class="container sec-grid">
+        <aside class="rail reveal">
+          <span class="rail-no" data-bn="০১ / ০৮">01 / 08</span>
+          <span class="kick" data-bn="সম্পাদকীয় বাছাই">Editors' pick</span>
+          <h2 data-bn="আজকের আলোচিত ৫ ঘটনা">Five That Matter</h2>
+          <p data-bn="আজ আপনার দিনকে প্রভাবিত করবে এমন পাঁচটি খবর—আর কেন।">Five stories that will shape your day — and exactly why they matter to you.</p>
+        </aside>
+        <div class="f-list" id="pillars"></div>
+      </div>
+    </section>
+
+    <!-- ============ 02 · ACCOUNTABILITY + PUBLIC PROBLEMS ============ -->
+    <section class="sec" id="accountability">
+      <div class="container sec-grid">
+        <aside class="rail reveal">
+          <span class="rail-no" data-bn="০২ / ০৮">02 / 08</span>
+          <span class="kick" data-bn="জবাবদিহি ট্র্যাকার">Accountability tracker</span>
+          <h2 data-bn="শিরোনামেই থেমে থাকি না">We don't stop at the headline</h2>
+          <p data-bn="প্রকাশের পরেও আমরা নজর রাখি—কী ঘটল, কর্তৃপক্ষ কী বলল, ফল কী হলো।">After we publish, we keep watching — what happened next, what officials said, and what changed.</p>
+          <div class="tabs" id="accTabs" role="tablist">
+            <button class="active" data-tab="follow"><i class="ph-light ph-newspaper"></i> <span data-bn="খবরের ফলোআপ">Story follow-ups</span></button>
+            <button data-tab="promise"><i class="ph-light ph-bank"></i> <span data-bn="প্রতিশ্রুতি ট্র্যাকার">Promise tracker</span></button>
+          </div>
+          <dl class="rail-stats">
+            <div><dt data-bn="২৪">24</dt><dd data-bn="খবর নজরে">stories tracked</dd></div>
+            <div><dt data-bn="৬১%">61%</dt><dd data-bn="সমস্যার সমাধান">problems resolved</dd></div>
+          </dl>
+        </aside>
+        <div class="acc-body">
+          <div class="trk-grid reveal" id="trackerList"></div>
+          <div class="prm-list reveal" id="promiseList" hidden></div>
+
+          <div class="board reveal">
+            <div class="board-head">
+              <div>
+                <span class="kick" data-bn="জনসমস্যা ট্র্যাকার">Public problem tracker</span>
+                <h3 data-bn="যে সমস্যাগুলোর দিকে নজর রাখছি">Problems we're watching</h3>
+              </div>
+              <button class="btn btn-dark js-report" data-type="problem"><i class="ph-light ph-plus"></i> <span data-bn="সমস্যা জানান">Report a problem</span></button>
+            </div>
+            <div class="board-cols" id="problemList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 03 · LOCAL EYES ============ -->
+    <section class="sec" id="local">
+      <div class="container sec-grid">
+        <aside class="rail reveal">
+          <span class="rail-no" data-bn="০৩ / ০৮">03 / 08</span>
+          <span class="kick" data-bn="লোকাল আইজ">Local Eyes</span>
+          <h2 data-bn="দেশের প্রতিটি প্রান্ত থেকে">Voices from every corner</h2>
+          <div class="div-list" id="divChips"></div>
+          <button class="btn btn-dark js-report rail-cta" data-type="story"><i class="ph-light ph-camera"></i> <span data-bn="এলাকার খবর পাঠান">Send a local story</span></button>
+        </aside>
+        <div class="local-grid" id="localGrid"></div>
+      </div>
+    </section>
+
+    <!-- ============ 04 · MY PRESS ============ -->
+    <section class="sec" id="mypress">
+      <div class="container sec-grid">
+        <aside class="rail reveal">
+          <span class="rail-no" data-bn="০৪ / ০৮">04 / 08</span>
+          <span class="kick" data-bn="মাই প্রেস">My Press</span>
+          <h2 data-bn="আপনার প্রথম পাতা, আপনার মতো করে">Your front page, your way</h2>
+          <p data-bn="বিষয় আর অঞ্চল বেছে নিন—পাতা সঙ্গে সঙ্গে বদলে যাবে।">Pick your topics and region — the page rearranges itself instantly.</p>
+        </aside>
+        <div class="mp-wrap reveal">
+          <div class="mp-settings">
+            <h6 data-bn="আপনার বিষয়">Your topics</h6>
+            <div class="topics" id="mpTopics"></div>
+            <h6 data-bn="আপনার অঞ্চল">Your region</h6>
+            <div class="select-wrap"><select id="mpRegion" aria-label="Region"></select></div>
+            <p class="mp-note"><i class="ph-light ph-check-circle"></i> <span data-bn="স্বয়ংক্রিয়ভাবে সংরক্ষিত">Saved automatically</span> · <a href="#" data-bn="সাইন ইন করে সিঙ্ক করুন">Sign in to sync</a></p>
+          </div>
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="mp-bar">
+                <img src="logo.png" alt="" />
+                <span id="mpCount"></span>
+              </div>
+              <div id="mpFeed"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 05 · KNOWLEDGE ============ -->
+    <section class="sec" id="knowledge">
+      <div class="container sec-grid">
+        <aside class="rail reveal">
+          <span class="rail-no" data-bn="০৫ / ০৮">05 / 08</span>
+          <span class="kick" data-bn="জ্ঞান ও শিক্ষা নেটওয়ার্ক">Knowledge &amp; Education</span>
+          <h2 data-bn="আজ নতুন কিছু শিখুন">Learn something new today</h2>
+          <p data-bn="ব্যাখ্যা, কোর্স, পরীক্ষার প্রস্তুতি আর ক্যারিয়ার গাইড—সহজ ভাষায়।">Explainers, courses, exam preparation and career guides — in plain language.</p>
+          <a href="#" class="link-arrow"><span data-bn="নেটওয়ার্ক ঘুরে দেখুন">Explore the network</span> <i class="ph-light ph-arrow-right"></i></a>
+        </aside>
+        <div class="kn-body">
+          <article class="kn-feature reveal">
+            <div class="kn-media"><img src="images/remittance.jpg" alt="" loading="lazy" /></div>
+            <div class="kn-text">
+              <span class="kn-badge"><i class="ph-light ph-lightbulb"></i> <span data-bn="আজকের ব্যাখ্যা">Explainer of the day</span></span>
+              <h3 data-bn="বৈদেশিক মুদ্রার রিজার্ভ কী, আর কেন এটা আপনার জন্য জরুরি?">What is the foreign-exchange reserve — and why should you care?</h3>
+              <p data-bn="আমদানি, টাকার মান আর বাজারদর—রিজার্ভ কীভাবে আপনার দৈনন্দিন জীবনে প্রভাব ফেলে, সহজ ভাষায়।">Imports, the taka and the price of groceries — how the reserve touches your everyday life, in plain language.</p>
+              <div class="meta"><span><i class="ph-light ph-clock"></i> <span data-bn="৬ মিনিট পড়া">6 min read</span></span><span><i class="ph-light ph-headphones"></i> <span data-bn="অডিও আছে">Audio available</span></span></div>
+            </div>
+          </article>
+          <div class="kn-tracks reveal" id="knTracks"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 06 · READER TOOLS ============ -->
+    <section class="sec" id="smart">
+      <div class="container sec-grid">
+        <aside class="rail reveal">
+          <span class="rail-no" data-bn="০৬ / ০৮">06 / 08</span>
+          <span class="kick" data-bn="পাতার বাইরেও">Beyond the page</span>
+          <h2 data-bn="শুধু সংবাদপত্র নয়">More than a newspaper</h2>
+          <p data-bn="সংবাদ, প্রযুক্তি, এআই আর জনসেবা—সব এক জায়গায়।">News, technology, AI and public service — woven into one experience.</p>
+        </aside>
+        <div class="tools reveal">
+          <article class="tool tool-ai">
+            <span class="tool-ic"><i class="ph-light ph-sparkle"></i></span>
+            <h4 data-bn="পার্সোনাল এআই নিউজ সহকারী">Personal AI News Assistant</h4>
+            <p data-bn="যেকোনো খবর সহজ ভাষায় বুঝে নিন—উত্তর আসবে আমাদের যাচাই করা প্রতিবেদন থেকে।">Understand any story in plain language — answered from our verified reporting.</p>
+            <div class="chat-demo">
+              <div class="cd-q" data-bn="রিজার্ভ কী?">What is the reserve?</div>
+              <div class="cd-a"><span data-bn="দেশের হাতে থাকা বৈদেশিক মুদ্রার সঞ্চয়—এটি দিয়ে আমদানির খরচ মেটানো হয় ও টাকার মান স্থিতিশীল রাখা হয়।">The foreign currency a country holds — it pays for imports and keeps the taka stable.</span><small><i class="ph-light ph-seal-check"></i> <span data-bn="সূত্র: ব্র্যান্ড বাংলাদেশ, ২ নভেম্বর">Source: Brand Bangladesh, 2 Nov</span></small></div>
+            </div>
+            <a href="#" class="link-arrow js-open-ai"><span data-bn="সহকারীকে জিজ্ঞেস করুন">Ask the assistant</span> <i class="ph-light ph-arrow-right"></i></a>
+          </article>
+          <article class="tool">
+            <span class="tool-ic"><i class="ph-light ph-qr-code"></i></span>
+            <h4 data-bn="লাইভ প্রেস: কিউআর কোড">Live Press: QR Code</h4>
+            <p data-bn="ছাপা পাতার কিউআর স্ক্যান করলেই খুলবে সর্বশেষ আপডেট, ভিডিও আর নথি।">Scan the printed page to open the latest update, video and documents.</p>
+            <div class="qr-box"><div id="qr" aria-hidden="true"></div></div>
+            <a href="#" class="link-arrow"><span data-bn="কীভাবে কাজ করে">How it works</span> <i class="ph-light ph-arrow-right"></i></a>
+          </article>
+          <article class="tool">
+            <span class="tool-ic"><i class="ph-light ph-headphones"></i></span>
+            <h4 data-bn="হ্যান্ডস-ফ্রি অডিও">Hands-Free Audio</h4>
+            <p data-bn="গাড়ি চালাতে বা রান্না করতে—স্পর্শ ছাড়াই শুনুন, মুখে বলেই নিয়ন্ত্রণ করুন।">Driving or cooking? Listen without touching the screen and control it by voice.</p>
+            <div class="wave" id="wave"></div>
+            <a href="#brief" class="link-arrow"><span data-bn="এখনই শুনুন">Listen now</span> <i class="ph-light ph-arrow-right"></i></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 07 · TALK TO US ============ -->
+    <section class="sec" id="talk">
+      <div class="container sec-grid">
+        <aside class="rail reveal">
+          <span class="rail-no" data-bn="০৭ / ০৮">07 / 08</span>
+          <span class="kick" data-bn="আমরা শুনছি">We're listening</span>
+          <h2 data-bn="সরাসরি সংবাদকক্ষের সঙ্গে">Talk to the newsroom</h2>
+          <a class="hotline" href="tel:+8809600000000">
+            <i class="ph-light ph-phone"></i>
+            <span><small data-bn="প্রেস হেল্পলাইন · সকাল ৯টা – রাত ৯টা">Press Helpline · 9 am – 9 pm</small><strong>+880 9600-000000</strong></span>
+          </a>
+          <ul class="trust">
+            <li><i class="ph-light ph-clock-countdown"></i> <span data-bn="গড়ে ৬ ঘণ্টায় উত্তর">Average reply in 6 hours</span></li>
+            <li><i class="ph-light ph-seal-check"></i> <span data-bn="প্রতিটি সংশোধন প্রকাশ্যে ছাপা হয়">Every correction published openly</span></li>
+            <li><i class="ph-light ph-lock-simple"></i> <span data-bn="আপনার তথ্য গোপন থাকবে">Your details stay private</span></li>
+          </ul>
+        </aside>
+        <div class="talk-grid reveal">
+          <article class="talk-card">
+            <span class="kick" data-bn="রিডার রিড্রেস">Reader redress</span>
+            <h3 data-bn="প্রেস হেল্পলাইন">Press Helpline</h3>
+            <p class="tk-desc" data-bn="অভিযোগ, ভুল সংশোধন বা সহায়তা—২৪ ঘণ্টার মধ্যে উত্তর দেবেন একজন মানুষ।">Complaints, corrections or help — a real person replies within 24 hours.</p>
+            <form class="form" id="helpForm">
+              <div class="seg">
+                <button type="button" class="active" data-bn="অভিযোগ">Complaint</button>
+                <button type="button" data-bn="ভুল সংশোধন">Correction</button>
+                <button type="button" data-bn="সহায়তা">Help</button>
+              </div>
+              <label class="fld"><span data-bn="নাম">Name</span><input type="text" required placeholder="e.g. Rahima Khatun" data-bn-ph="যেমন: রহিমা খাতুন" /></label>
+              <label class="fld"><span data-bn="ফোন বা ইমেইল">Phone or email</span><input type="text" required placeholder="So we can reply" data-bn-ph="যাতে আমরা উত্তর দিতে পারি" /></label>
+              <label class="fld"><span data-bn="বিস্তারিত">Details</span><textarea required placeholder="Tell us what happened" data-bn-ph="কী ঘটেছে, আমাদের জানান"></textarea></label>
+              <button class="btn btn-dark" type="submit"><i class="ph-light ph-ticket"></i> <span data-bn="টিকেট খুলুন">Open a ticket</span></button>
+            </form>
+            <div class="form-done" id="helpDone" hidden></div>
+          </article>
+
+          <article class="talk-card">
+            <span class="kick" data-bn="আপনার মত">Your opinion</span>
+            <h3 data-bn="পাঠকের মতামত">Reader Feedback</h3>
+            <p class="tk-desc" data-bn="আপনার মত, প্রশ্ন আর পরামর্শ—সরাসরি যায় সম্পাদকদের কাছে।">Opinions, questions and ideas — straight to the editors.</p>
+            <form class="form" id="fbForm">
+              <span class="f-label" data-bn="আজকের সংস্করণ কেমন লাগল?">How was today's edition?</span>
+              <div class="stars" id="stars">
+                <button type="button" data-v="1" aria-label="1 star"><i class="ph-fill ph-star"></i></button>
+                <button type="button" data-v="2" aria-label="2 stars"><i class="ph-fill ph-star"></i></button>
+                <button type="button" data-v="3" aria-label="3 stars"><i class="ph-fill ph-star"></i></button>
+                <button type="button" data-v="4" aria-label="4 stars"><i class="ph-fill ph-star"></i></button>
+                <button type="button" data-v="5" aria-label="5 stars"><i class="ph-fill ph-star"></i></button>
+              </div>
+              <div class="seg">
+                <button type="button" class="active" data-bn="কনটেন্ট">Content</button>
+                <button type="button" data-bn="ডিজাইন">Design</button>
+                <button type="button" data-bn="অডিও">Audio</button>
+                <button type="button" data-bn="অন্যান্য">Other</button>
+              </div>
+              <label class="fld"><span data-bn="আপনার পরামর্শ">Your suggestion</span><textarea required placeholder="What should we do better?" data-bn-ph="আমরা কী আরও ভালো করতে পারি?"></textarea></label>
+              <button class="btn btn-brand" type="submit"><i class="ph-light ph-paper-plane-tilt"></i> <span data-bn="মতামত পাঠান">Send feedback</span></button>
+            </form>
+            <div class="form-done" id="fbDone" hidden></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 08 · READERS' CLUB ============ -->
+    <section class="club" id="club">
+      <div class="container">
+        <div class="club-inner reveal">
+          <div class="club-text">
+            <span class="kick" data-bn="০৮ · পাঠক ক্লাব">08 · Readers' Club</span>
+            <h2 data-bn="গল্পের অংশ হয়ে উঠুন">Be part of the story</h2>
+            <p data-bn="সম্পাদকদের সঙ্গে আড্ডা, বিশেষ আয়োজন, অনুসন্ধানের বিষয় বাছাইয়ে ভোট—আর প্রতিদিন সকালে ইনবক্সে আলোচিত ৫ ঘটনা।">Meet editors, attend events, vote on what we investigate next and get the Five That Matter in your inbox every morning.</p>
+            <form class="club-form" id="clubForm">
+              <input type="email" required placeholder="Your email address" data-bn-ph="আপনার ইমেইল ঠিকানা" />
+              <button class="btn btn-dark" type="submit"><span data-bn="যোগ দিন">Join free</span></button>
+            </form>
+            <div class="club-perks">
+              <span><i class="ph-light ph-coffee"></i><span data-bn="সম্পাদকদের সঙ্গে আড্ডা">Coffee with editors</span></span>
+              <span><i class="ph-light ph-calendar-blank"></i><span data-bn="বিশেষ আয়োজন">Members-only events</span></span>
+              <span><i class="ph-light ph-envelope-simple"></i><span data-bn="সকালের নিউজলেটার">Morning newsletter</span></span>
+            </div>
+          </div>
+          <div class="poll">
+            <span class="kick" data-bn="সদস্যদের ভোট">Members' vote</span>
+            <h4 data-bn="আমাদের পরবর্তী অনুসন্ধান কী নিয়ে হওয়া উচিত?">What should we investigate next?</h4>
+            <div id="pollList"></div>
+            <div class="poll-foot"><span id="pollTotal"></span><span data-bn="শুক্রবার শেষ">Closes Friday</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="foot-top">
+        <img src="logo.png" alt="Brand Bangladesh" class="foot-logo" />
+        <p data-bn="একটি স্বাধীন জাতীয় দৈনিক—সংবাদ, প্রযুক্তি, এআই, জনসেবা আর পাঠক-সমাজ।">An independent national daily — news, technology, AI, public service and community.</p>
+        <div class="socials">
+          <a href="#" aria-label="Facebook"><i class="ph-light ph-facebook-logo"></i></a>
+          <a href="#" aria-label="YouTube"><i class="ph-light ph-youtube-logo"></i></a>
+          <a href="#" aria-label="X"><i class="ph-light ph-x-logo"></i></a>
+          <a href="#" aria-label="Instagram"><i class="ph-light ph-instagram-logo"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="ph-light ph-linkedin-logo"></i></a>
+        </div>
+      </div>
+      <div class="foot-grid">
+        <div class="foot-col">
+          <h5 data-bn="বিভাগ">Sections</h5>
+          <ul>
+            <li><a href="#" data-bn="বাংলাদেশ">Bangladesh</a></li>
+            <li><a href="#" data-bn="বিশ্ব">World</a></li>
+            <li><a href="#" data-bn="অর্থনীতি">Economy</a></li>
+            <li><a href="#" data-bn="প্রযুক্তি">Technology</a></li>
+            <li><a href="#local" data-bn="লোকাল আইজ">Local Eyes</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <h5 data-bn="পাঠক সেবা">Reader services</h5>
+          <ul>
+            <li><a href="#mypress" data-bn="মাই প্রেস">My Press</a></li>
+            <li><a href="#club" data-bn="পাঠক ক্লাব">Readers' Club</a></li>
+            <li><a href="#talk" data-bn="প্রেস হেল্পলাইন">Press Helpline</a></li>
+            <li><a href="#talk" data-bn="পাঠকের মতামত">Reader Feedback</a></li>
+            <li><a href="#knowledge" data-bn="জ্ঞান ও শিক্ষা">Knowledge Network</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <h5 data-bn="আরও">More</h5>
+          <ul>
+            <li><a href="#accountability" data-bn="জবাবদিহি ট্র্যাকার">Accountability Tracker</a></li>
+            <li><a href="#" data-bn="ই-পেপার">E-Paper</a></li>
+            <li><a href="#smart" data-bn="লাইভ প্রেস কিউআর">Live Press QR</a></li>
+            <li><a href="#" data-bn="বিজ্ঞাপন">Advertise</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <h5 data-bn="যোগাযোগ">Contact</h5>
+          <ul>
+            <li><i class="ph-light ph-phone"></i> +880 9600-000000</li>
+            <li><i class="ph-light ph-envelope-simple"></i> desk@brandbangladesh.com</li>
+            <li><i class="ph-light ph-map-pin"></i> <span data-bn="ঢাকা, বাংলাদেশ">Dhaka, Bangladesh</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span data-bn="© ২০২৬ ব্র্যান্ড বাংলাদেশ। সর্বস্বত্ব সংরক্ষিত।">© 2026 Brand Bangladesh. All rights reserved.</span>
+        <span class="foot-links">
+          <a href="#" data-bn="গোপনীয়তা">Privacy</a>
+          <a href="#" data-bn="শর্তাবলি">Terms</a>
+          <a href="#talk" data-bn="মতামত দিন">Feedback</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ REPORT / SUBMIT MODAL ============ -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+      <button class="icon-btn modal-x" id="modalX" aria-label="Close"><i class="ph-light ph-x"></i></button>
+      <span class="kick" id="mEyebrow"></span>
+      <h3 id="mTitle"></h3>
+      <p id="mDesc"></p>
+      <form class="form" id="mForm">
+        <div class="form-row">
+          <input type="text" required placeholder="Your name" data-bn-ph="আপনার নাম" />
+          <select id="mDiv" required aria-label="Division"></select>
+        </div>
+        <input type="text" required placeholder="Exact place (area, road, landmark)" data-bn-ph="নির্দিষ্ট স্থান (এলাকা, সড়ক, চিহ্ন)" />
+        <textarea id="mMsg" required></textarea>
+        <label class="upload"><i class="ph-light ph-camera"></i> <span data-bn="ছবি যুক্ত করুন (ঐচ্ছিক)">Add photos (optional)</span><input type="file" accept="image/*" multiple hidden /></label>
+        <button class="btn btn-dark btn-block" type="submit"><i class="ph-light ph-paper-plane-tilt"></i> <span data-bn="পাঠান">Send</span></button>
+      </form>
+      <div class="form-done" id="mDone" hidden></div>
+    </div>
+  </div>
+
+  <!-- ============ SEARCH OVERLAY ============ -->
+  <div class="search-ov" id="searchOv">
+    <button class="icon-btn search-close" id="closeSearch" aria-label="Close"><i class="ph-light ph-x"></i></button>
+    <div class="search-box">
+      <input type="text" placeholder="Search stories, topics, places…" data-bn-ph="খবর, বিষয় বা জায়গা খুঁজুন…" />
+      <p data-bn="বন্ধ করতে Esc চাপুন">Press Esc to close</p>
+    </div>
+  </div>
+
+  <!-- ============ AI ASSISTANT ============ -->
+  <button class="ai-fab" id="aiFab"><i class="ph-light ph-sparkle"></i><span data-bn="এআই সহকারী">Ask AI</span></button>
+  <div class="ai-panel" id="aiPanel" role="dialog" aria-label="AI assistant">
+    <div class="ai-head">
+      <div class="ai-avatar"><svg><use href="#monument" /></svg></div>
+      <div>
+        <strong data-bn="প্রেস সহকারী">Press Assistant</strong>
+        <small data-bn="আজকের খবর নিয়ে যা খুশি জিজ্ঞেস করুন">Ask anything about today's news</small>
+      </div>
+      <button class="icon-btn" id="aiClose" aria-label="Close"><i class="ph-light ph-x"></i></button>
+    </div>
+    <div class="ai-body" id="aiBody"></div>
+    <div class="ai-chips" id="aiChips"></div>
+    <form class="ai-form" id="aiForm">
+      <input type="text" placeholder="Type your question…" data-bn-ph="আপনার প্রশ্ন লিখুন…" />
+      <button type="submit" aria-label="Send"><i class="ph-light ph-paper-plane-tilt"></i></button>
+    </form>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
