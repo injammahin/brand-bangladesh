@@ -410,8 +410,13 @@
   // Which Google voice to use: pure Bangla for the Bangla edition, proper English for the
   // English edition ('en-IN' = clear English with a South Asian tone; use 'en' for neutral).
   const TTS_VOICE = { bn: 'bn', en: 'en-IN' };
-  const ttsUrl = (q) =>
-    `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${TTS_VOICE[lang]}&q=${encodeURIComponent(q)}`;
+  // Opened as a local file → call Google directly (no Referer is sent, so it works).
+  // On a website (Vercel) → go through our /api/tts function, because Google rejects
+  // requests that carry a website Referer.
+  const viaProxy = location.protocol.startsWith('http');
+  const ttsUrl = (q) => viaProxy
+    ? `/api/tts?tl=${TTS_VOICE[lang]}&q=${encodeURIComponent(q)}`
+    : `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${TTS_VOICE[lang]}&q=${encodeURIComponent(q)}`;
   // The service reads up to ~200 characters per request, so split on sentence / clause breaks
   function ttsChunks(text, max = 180) {
     const out = [];
