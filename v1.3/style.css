@@ -80,7 +80,7 @@ body.loaded .loader { opacity: 0; visibility: hidden; }
   0%, 80%, 100% { transform: translateY(0); opacity: .35; }
   40% { transform: translateY(-6px); opacity: 1; }
 }
-.loader-mark { width: 84px; height: 84px; overflow: visible; }
+.loader-mark { width: 92px; height: 97px; overflow: visible; }
 /* Each shard rises from its base in turn until the monument is complete */
 .lp {
   transform-box: fill-box; transform-origin: 50% 100%;
@@ -89,8 +89,8 @@ body.loaded .loader { opacity: 0; visibility: hidden; }
 }
 .lp1 { animation-delay: .05s; } .lp2 { animation-delay: .17s; }
 .lp3 { animation-delay: .29s; } .lp4 { animation-delay: .41s; }
-.lp6 { animation-delay: .53s; } .lp5 { animation-delay: .65s; }
-.lp7 { animation-delay: .77s; }
+.lp5b { animation-delay: .53s; } .lp6 { animation-delay: .6s; }
+.lp5 { animation-delay: .7s; } .lp7 { animation-delay: .8s; }
 @keyframes rise { to { transform: scaleY(1); opacity: 1; } }
 @keyframes fadeUp { to { opacity: 1; transform: none; } }
 
@@ -321,7 +321,7 @@ body.lang-bn .qb-time small { letter-spacing: 0; font-size: 12.5px; }
   font-family: var(--f-head); font-size: clamp(30px, 3.2vw, 46px); font-weight: var(--fw-head);
   line-height: 1.08; letter-spacing: -.022em; margin: 10px 0 14px;
 }
-.lead-story p { color: var(--ink-2); font-size: 17px; max-width: 640px; }
+.lead-story p { color: var(--ink-2); font-size: 17px; text-wrap: pretty; }
 .meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--muted); margin-top: 16px; }
 .meta span { display: inline-flex; gap: 6px; align-items: center; }
 .meta i { font-size: 15px; }
@@ -1017,8 +1017,8 @@ body.lang-bn .tk-kicker { letter-spacing: 0; font-size: 13px; }
 .typing span:nth-child(2) { animation-delay: .15s; }
 .typing span:nth-child(3) { animation-delay: .3s; }
 @keyframes blink { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
-.ai-chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 14px 0; scrollbar-width: none; }
-.ai-chips button { white-space: nowrap; font-size: 12.5px; padding: 7px 12px; border-radius: 99px; border: 1px solid var(--line-2); background: #fff; transition: .2s; }
+.ai-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px 0; }
+.ai-chips button { flex: 0 1 auto; max-width: 100%; text-align: left; line-height: 1.35;font-size: 12.5px; padding: 7px 12px; border-radius: 99px; border: 1px solid var(--line-2); background: #fff; transition: .2s; }
 .ai-chips button:hover { border-color: var(--teal); color: var(--teal); }
 .ai-form { display: flex; gap: 8px; padding: 12px 14px 14px; }
 .ai-form input { flex: 1; min-width: 0; height: 44px; border: 1px solid var(--line-2); border-radius: 99px; padding: 0 16px; font: inherit; font-size: 14px; outline: 0; transition: border .2s; }

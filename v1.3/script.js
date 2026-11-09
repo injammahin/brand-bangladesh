@@ -59,7 +59,7 @@
     ],
 
     stories: [
-      { seed: 'weaver', min: 7, cat: { en: 'Feature', bn: 'বিশেষ প্রতিবেদন' }, title: { en: 'The weavers of Tangail are rewriting the future of the saree', bn: 'তাঁতের শাড়ির ভবিষ্যৎ নতুন করে লিখছেন টাঙ্গাইলের তাঁতিরা' }, excerpt: { en: 'A new generation is pairing hand-looms with online storefronts — and finding buyers from Sylhet to Sydney.', bn: 'হস্তচালিত তাঁতের সঙ্গে অনলাইন দোকান জুড়ে দিচ্ছে নতুন প্রজন্ম—ক্রেতা মিলছে সিলেট থেকে সিডনি পর্যন্ত।' } },
+      { seed: 'weaver', min: 7, cat: { en: 'Feature', bn: 'বিশেষ প্রতিবেদন' }, title: { en: 'The weavers of Tangail are rewriting the future of the saree', bn: 'তাঁতের শাড়ির ভবিষ্যৎ নতুন করে লিখছেন টাঙ্গাইলের তাঁতিরা' }, excerpt: { en: 'A new generation is pairing hand-looms with online storefronts — and finding buyers from Sylhet to Sydney. Inside the family workshops keeping a centuries-old craft alive, the young designers betting its future on a global market that is finally paying attention, and the village cooperatives turning every sale into a steady, dignified wage.', bn: 'হস্তচালিত তাঁতের সঙ্গে অনলাইন দোকান জুড়ে দিচ্ছে নতুন প্রজন্ম—ক্রেতা মিলছে সিলেট থেকে সিডনি পর্যন্ত। শতাব্দীপ্রাচীন এই শিল্পকে বাঁচিয়ে রাখা পারিবারিক কারখানাগুলোর ভেতরের গল্প—আর সেই তরুণ নকশাকারদের কথা, যাঁরা বিশ্ববাজারে বাজি ধরছেন এর ভবিষ্যৎ নিয়ে, আর সেই গ্রামীণ সমবায়ের কথা, যারা প্রতিটি বিক্রিকে বদলে দিচ্ছে নিয়মিত ও সম্মানজনক মজুরিতে।' } },
       { seed: 'garment', min: 4, cat: { en: 'Economy', bn: 'অর্থনীতি' }, title: { en: 'Garment exports rise 8% as new markets open', bn: 'নতুন বাজারে পোশাক রপ্তানি বেড়েছে ৮%' } },
       { seed: 'canal', min: 5, cat: { en: 'Environment', bn: 'পরিবেশ' }, title: { en: "Dhaka's canals get a second life", bn: 'নতুন প্রাণ পাচ্ছে ঢাকার খালগুলো' } },
       { seed: 'folk', min: 3, cat: { en: 'Culture', bn: 'সংস্কৃতি' }, title: { en: 'A folk music revival fills concert halls', bn: 'লোকসংগীতের পুনর্জাগরণে মুখর মিলনায়তন' } },
@@ -313,6 +313,35 @@
   const hasSpeech = 'speechSynthesis' in window;
   const items = () => $$('#bpList li');
 
+  // One Bangla voice reads BOTH editions — so English comes out with a natural Bengali
+  // accent. Ranked for a soft, sweet (মধুর) sound: neural Bangladeshi female first.
+  let voices = [];
+  const loadVoices = () => { voices = speechSynthesis.getVoices(); };
+  if (hasSpeech) { loadVoices(); speechSynthesis.addEventListener('voiceschanged', loadVoices); }
+  const norm = (s) => (s || '').replace('_', '-').toLowerCase();
+  function scoreVoice(v) {
+    const l = norm(v.lang), n = v.name.toLowerCase();
+    let s = 0;
+    if (l.startsWith('bn')) s += 100;            // Bangla voice — the core requirement
+    else if (l === 'en-in' || l === 'en-bd') s += 20; // last resort: South Asian English
+    else return -1;
+    if (l === 'bn-bd') s += 20;                  // Bangladeshi over Indian Bangla
+    if (/natural|neural|online/.test(n)) s += 40; // neural voices sound far smoother
+    if (/nabanita|tanishaa|female|google/.test(n)) s += 10; // softer female timbre
+    return s;
+  }
+  function pickVoice() {
+    if (!voices.length && hasSpeech) loadVoices();
+    let best = null, top = -1;
+    voices.forEach((v) => { const s = scoreVoice(v); if (s > top) { top = s; best = v; } });
+    return best;
+  }
+  // Leave a hint in the console so it's easy to see which voice is in use
+  if (hasSpeech) setTimeout(() => {
+    const v = pickVoice();
+    console.info('[Briefing] voice:', v ? `${v.name} (${v.lang})` : 'none — install a Bangla voice');
+  }, 1200);
+
   function setPlayIcon(on) {
     $('#bpPlay').classList.toggle('playing', on);
     $('#bpPlay').innerHTML = `<i class="ph-fill ${on ? 'ph-pause' : 'ph-play'}"></i>`;
@@ -335,8 +364,11 @@
 
     if (hasSpeech) {
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = lang === 'bn' ? 'bn-BD' : 'en-US';
-      u.rate = 1;
+      const v = pickVoice();
+      u.lang = v ? v.lang : 'bn-BD';
+      if (v) u.voice = v;
+      u.rate = 0.9;   // unhurried, clear delivery
+      u.pitch = 1.05; // a touch brighter and warmer
       u.onend = next;
       speechSynthesis.speak(u);
     } else {
