@@ -194,7 +194,30 @@
             <div class="bp-ctrl">
               <button class="bp-btn" id="bpPrev" aria-label="Previous story"><i class="ph-light ph-skip-back"></i></button>
               <button class="bp-btn" id="bpNext" aria-label="Next story"><i class="ph-light ph-skip-forward"></i></button>
-              <button class="bp-mic" id="bpMic"><i class="ph-light ph-microphone"></i> <span id="micLabel">Voice commands</span></button>
+              <button class="bp-mic" id="bpMic" aria-pressed="false">
+                <i class="ph-light ph-microphone"></i>
+                <span class="mic-eq" aria-hidden="true"><b></b><b></b><b></b><b></b></span>
+                <span id="micLabel">Voice commands</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Live voice console: shows the mic is hearing you, what it heard, and what it did -->
+          <div class="vc" id="vc" aria-live="polite">
+            <div class="vc-inner">
+              <div class="vc-orb" aria-hidden="true">
+                <span class="vc-ring"></span><span class="vc-ring r2"></span>
+                <i class="ph-fill ph-microphone"></i>
+              </div>
+              <div class="vc-main">
+                <div class="vc-top">
+                  <span class="vc-state" id="vcState">Listening…</span>
+                  <div class="vc-wave" id="vcWave" aria-hidden="true"></div>
+                </div>
+                <p class="vc-heard" id="vcHeard"></p>
+                <div class="vc-cmds" id="vcCmds"></div>
+              </div>
+              <button class="vc-close" id="vcClose" aria-label="Turn off voice commands"><i class="ph-light ph-x"></i></button>
             </div>
           </div>
           <ol class="bp-list" id="bpList"></ol>

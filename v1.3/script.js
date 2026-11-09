@@ -312,9 +312,10 @@
   let fallbackTimer = null;
   const hasSpeech = 'speechSynthesis' in window;
   const items = () => $$('#bpList li');
+  let clip = new Audio(); // the clip currently playing
 
-  // One Bangla voice reads BOTH editions — so English comes out with a natural Bengali
-  // accent. Ranked for a soft, sweet (মধুর) sound: neural Bangladeshi female first.
+  // Browser-voice fallback: a Bangla voice for the Bangla edition, an English voice for
+  // the English edition. Neural / female voices are preferred for a softer sound.
   let voices = [];
   const loadVoices = () => { voices = speechSynthesis.getVoices(); };
   if (hasSpeech) { loadVoices(); speechSynthesis.addEventListener('voiceschanged', loadVoices); }
@@ -322,10 +323,15 @@
   function scoreVoice(v) {
     const l = norm(v.lang), n = v.name.toLowerCase();
     let s = 0;
-    if (l.startsWith('bn')) s += 100;            // Bangla voice — the core requirement
-    else if (l === 'en-in' || l === 'en-bd') s += 20; // last resort: South Asian English
-    else return -1;
-    if (l === 'bn-bd') s += 20;                  // Bangladeshi over Indian Bangla
+    if (lang === 'bn') {                         // Bangla edition → Bangla voice only
+      if (!l.startsWith('bn')) return -1;
+      s += 100;
+      if (l === 'bn-bd') s += 20;                // Bangladeshi over Indian Bangla
+    } else {                                     // English edition → English voice only
+      if (!l.startsWith('en')) return -1;
+      s += 100;
+      if (l === 'en-in' || l === 'en-bd') s += 20; // South Asian English first
+    }
     if (/natural|neural|online/.test(n)) s += 40; // neural voices sound far smoother
     if (/nabanita|tanishaa|female|google/.test(n)) s += 10; // softer female timbre
     return s;
@@ -353,21 +359,83 @@
     cur = Math.max(0, i);
     const my = ++token;
     if (hasSpeech) speechSynthesis.cancel();
+    clip.onended = clip.onerror = null; clip.pause();
     clearTimeout(fallbackTimer);
 
     list.forEach((li, k) => li.classList.toggle('active', k === cur));
     $('#bpBar').style.width = `${((cur + 1) / list.length) * 100}%`;
 
     const p = list[cur].querySelector('p');
-    const text = `${list[cur].querySelector('h4').textContent}. ${p ? p.textContent : ''}`;
+    const stop = lang === 'bn' ? '। ' : '. ';
+    const text = `${list[cur].querySelector('h4').textContent}${stop}${p ? p.textContent : ''}`.trim();
     const next = () => { if (playing && my === token) speakItem(cur + 1); };
 
+    // Free Google Translate voice (female, Bengali) — reads both editions, so the English
+    // briefing also comes out in a Bengali voice. Falls back to the browser's voice if offline.
+    const parts = ttsChunks(text);
+    // Pre-load every part (and the next headline) so there are no dead gaps between them
+    const clips = parts.map((q) => newsClip(ttsUrl(q)));
+    const nextLi = list[cur + 1];
+    if (nextLi) newsClip(ttsUrl(ttsChunks(nextLi.querySelector('h4').textContent)[0]));
+    let k = 0, fellBack = false;
+    const fallback = () => {
+      if (fellBack || my !== token || !playing) return;
+      fellBack = true;
+      clip.onended = clip.onerror = null;
+      browserSpeak(parts.slice(k).join(' '), next);
+    };
+    const playPart = () => {
+      if (my !== token || !playing) return;
+      if (k >= parts.length) { next(); return; }
+      clip = clips[k];
+      clip.playbackRate = NEWS_RATE;
+      clip.onended = () => { k++; playPart(); };
+      clip.onerror = fallback;
+      clip.play().catch(fallback);
+    };
+    playPart();
+  }
+
+  // Newsreader pace: Google's voice is slow by default, so play it faster (pitch is kept natural)
+  let NEWS_RATE = 1.25; // voice commands "faster" / "slower" adjust this
+  function newsClip(src) {
+    const a = new Audio();
+    a.preload = 'auto';
+    a.defaultPlaybackRate = NEWS_RATE;
+    a.preservesPitch = true;
+    a.src = src;
+    return a;
+  }
+
+  // Which Google voice to use: pure Bangla for the Bangla edition, proper English for the
+  // English edition ('en-IN' = clear English with a South Asian tone; use 'en' for neutral).
+  const TTS_VOICE = { bn: 'bn', en: 'en-IN' };
+  const ttsUrl = (q) =>
+    `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${TTS_VOICE[lang]}&q=${encodeURIComponent(q)}`;
+  // The service reads up to ~200 characters per request, so split on sentence / clause breaks
+  function ttsChunks(text, max = 180) {
+    const out = [];
+    let buf = '';
+    for (const piece of text.split(/(?<=[।.!?;,—])\s+/)) {
+      if ((buf + ' ' + piece).trim().length <= max) { buf = (buf + ' ' + piece).trim(); continue; }
+      if (buf) out.push(buf);
+      buf = piece;
+      while (buf.length > max) { // very long clause: cut at the last space
+        const cut = buf.lastIndexOf(' ', max) > 0 ? buf.lastIndexOf(' ', max) : max;
+        out.push(buf.slice(0, cut)); buf = buf.slice(cut).trim();
+      }
+    }
+    if (buf) out.push(buf);
+    return out;
+  }
+
+  function browserSpeak(text, next) {
     if (hasSpeech) {
       const u = new SpeechSynthesisUtterance(text);
       const v = pickVoice();
-      u.lang = v ? v.lang : 'bn-BD';
+      u.lang = v ? v.lang : (lang === 'bn' ? 'bn-BD' : 'en-IN');
       if (v) u.voice = v;
-      u.rate = 0.9;   // unhurried, clear delivery
+      u.rate = 1.15;  // brisk newsreader pace
       u.pitch = 1.05; // a touch brighter and warmer
       u.onend = next;
       speechSynthesis.speak(u);
@@ -386,6 +454,7 @@
     playing = false;
     token++;
     if (hasSpeech) speechSynthesis.cancel();
+    clip.onended = clip.onerror = null; clip.pause();
     clearTimeout(fallbackTimer);
     setPlayIcon(false);
     if (!finished) { items().forEach((li) => li.classList.remove('active')); cur = -1; }
@@ -411,27 +480,260 @@
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   let rec = null;
   let listening = false;
+  let micStream = null, audioCtx = null, analyser = null, rafId = 0;
+  let resetTimer = null;
+
+  const vc = $('#vc');
+  const WAVE_BARS = 32;
+  $('#vcWave').innerHTML = Array.from({ length: WAVE_BARS }, (_, k) => `<b style="--k:${k}"></b>`).join('');
+  const waveBars = $$('#vcWave b');
+  const eqBars = $$('#bpMic .mic-eq b');
+
+  // ---- Command vocabulary (English + Bangla). Order matters: specific before general.
+  const BN_NUM = { 'এক': 1, 'দুই': 2, 'তিন': 3, 'চার': 4, 'পাঁচ': 5, 'ছয়': 6, 'সাত': 7, 'আট': 8,
+    'প্রথম': 1, 'দ্বিতীয়': 2, 'তৃতীয়': 3, 'চতুর্থ': 4, 'পঞ্চম': 5, 'ষষ্ঠ': 6, 'সপ্তম': 7, 'অষ্টম': 8 };
+  const EN_NUM = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8,
+    first: 1, second: 2, third: 3, fourth: 4, fifth: 5, sixth: 6, seventh: 7, eighth: 8, to: 2, too: 2, for: 4 };
+  const toLatin = (s) => s.replace(/[০-৯]/g, (d) => BN_DIGITS.indexOf(d));
+
+  function findNumber(s) {
+    const d = toLatin(s).match(/\b([1-8])\b|([1-8])/);
+    if (d) return +(d[1] || d[2]);
+    for (const [w, n] of Object.entries(BN_NUM)) if (s.includes(w)) return n;
+    for (const [w, n] of Object.entries(EN_NUM)) if (new RegExp(`\\b${w}\\b`).test(s)) return n;
+    return 0;
+  }
+
+  const COMMANDS = [
+    { id: 'micOff', re: /stop listening|mic off|turn off (the )?mic|মাইক বন্ধ|শোনা বন্ধ/,
+      run: () => { stopListening(); return L('Voice commands off', 'ভয়েস কমান্ড বন্ধ'); } },
+    { id: 'help', re: /\bhelp\b|what can i say|commands|সাহায্য|কী বলব|কি বলব/,
+      run: () => { showHint(true); return L('Here’s what you can say', 'যা বলতে পারেন'); } },
+    { id: 'mode', re: /\bseconds\b|\bsixty\b|\b60\b|\bminutes?\b|headlines? only|full picture|context|সেকেন্ড|মিনিট|শিরোনাম|পূর্ণ চিত্র|প্রেক্ষাপট/,
+      run: (s) => {
+        const n = findNumber(s);
+        const sec = /60|sixty|seconds|ষাট|সেকেন্ড|headline|শিরোনাম/.test(toLatin(s)) && !/3|5|three|five|তিন|পাঁচ/.test(toLatin(s)) ? 60
+          : n === 3 || /context|প্রেক্ষাপট/.test(s) ? 180
+          : n === 5 || /full|পূর্ণ/.test(s) ? 300
+          : n === 1 ? 60 : 0;
+        if (!sec) return null;
+        selectTime(sec); startAudio(0);
+        return t(DATA.briefCfg[sec].label);
+      } },
+    { id: 'goto', re: /number|story|news|item|নম্বর|নাম্বার|খবর\s*[০-৯\d]|[০-৯\d]\s*নম্বর|first|second|third|fourth|fifth|sixth|seventh|eighth|প্রথম|দ্বিতীয়|তৃতীয়|চতুর্থ|পঞ্চম|ষষ্ঠ|সপ্তম|অষ্টম/,
+      run: (s) => {
+        const n = findNumber(s);
+        if (!n || n > items().length) return null;
+        startAudio(n - 1);
+        return L(`Story ${n}`, `খবর ${num(n)}`);
+      } },
+    { id: 'next', re: /\bnext\b|skip|forward|পরের|পরে|সামনে|এর পর/,
+      run: () => { step(1); return L('Next story', 'পরের খবর'); } },
+    { id: 'prev', re: /previous|go back|\bback\b|last one|আগের|পেছনে|পিছনে/,
+      run: () => { step(-1); return L('Previous story', 'আগের খবর'); } },
+    { id: 'repeat', re: /repeat|again|one more time|আবার|পুনরায়/,
+      run: () => { startAudio(cur < 0 ? 0 : cur); return L('Repeating', 'আবার পড়ছি'); } },
+    { id: 'faster', re: /faster|speed up|quicker|দ্রুত|তাড়াতাড়ি|জোরে পড়/,
+      run: () => setRate(+0.15) },
+    { id: 'slower', re: /slower|slow down|ধীরে|আস্তে/,
+      run: () => setRate(-0.15) },
+    { id: 'pause', re: /\bstop\b|pause|wait|hold on|quiet|থাম|বন্ধ|দাঁড়াও|চুপ/,
+      run: () => { stopAudio(); return L('Paused', 'থামানো হলো'); } },
+    { id: 'play', re: /play|start|resume|continue|read|go on|শুরু|চালাও|চালু|শোনাও|পড়ো|পড়|চলুক/,
+      run: () => { startAudio(cur < 0 ? 0 : cur); return L('Playing', 'চলছে'); } }
+  ];
+
+  function setRate(d) {
+    NEWS_RATE = Math.min(1.7, Math.max(0.9, +(NEWS_RATE + d).toFixed(2)));
+    clip.playbackRate = NEWS_RATE;
+    return L(`Speed ${NEWS_RATE.toFixed(2)}×`, `গতি ${num(NEWS_RATE.toFixed(2))}×`);
+  }
+
+  // Example chips — also clickable, so the console doubles as a control strip
+  const EXAMPLES = () => lang === 'bn'
+    ? [['পরের খবর', 'পরের'], ['আগের খবর', 'আগের'], ['থামো', 'থামো'], ['শুরু করো', 'শুরু'], ['৩ নম্বর খবর', '৩ নম্বর'], ['আবার', 'আবার'], ['দ্রুত', 'দ্রুত'], ['৫ মিনিট', '৫ মিনিট']]
+    : [['“Next”', 'next'], ['“Previous”', 'previous'], ['“Pause”', 'pause'], ['“Play”', 'play'], ['“Story 3”', 'story 3'], ['“Repeat”', 'repeat'], ['“Faster”', 'faster'], ['“5 minutes”', '5 minutes']];
+  function renderCmds() {
+    $('#vcCmds').innerHTML = EXAMPLES().map(([label, said]) => `<button type="button" data-say="${said}">${label}</button>`).join('');
+  }
+  $('#vcCmds').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-say]');
+    if (b) handleCommand(b.dataset.say, true);
+  });
+
+  function setState(text) { $('#vcState').textContent = text; }
+  function showHint(force) {
+    const h = $('#vcHeard');
+    h.className = 'vc-heard hint';
+    h.textContent = force || !h.textContent
+      ? L('Try saying one of these — or tap one.', 'নিচের যেকোনো একটি বলুন—অথবা চাপুন।')
+      : h.textContent;
+  }
+
+  function handleCommand(said, tapped = false) {
+    const s = said.toLowerCase().trim();
+    const h = $('#vcHeard');
+    h.className = 'vc-heard';
+    h.textContent = tapped ? '' : `“${said.trim()}”`;
+    vc.classList.remove('ok', 'miss');
+    void vc.offsetWidth; // restart the flash animation
+
+    let done = null;
+    for (const c of COMMANDS) {
+      if (c.re.test(s)) { done = c.run(s); if (done) break; }
+    }
+    const tag = document.createElement('span');
+    tag.className = done ? 'ok' : 'ok miss';
+    tag.innerHTML = done
+      ? `<i class="ph-bold ph-check"></i> ${done}`
+      : `<i class="ph-bold ph-question"></i> ${L('Didn’t catch a command', 'কমান্ড বুঝতে পারিনি')}`;
+    h.appendChild(tag);
+    vc.classList.add(done ? 'ok' : 'miss');
+    earcon(!!done);
+
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => {
+      if (!listening) return;
+      vc.classList.remove('ok', 'miss');
+      setState(L('Listening…', 'শুনছি…'));
+      showHint(true);
+    }, 3200);
+  }
+
+  // Short confirmation tone (rising = understood, low = not understood)
+  function earcon(ok) {
+    try {
+      const ctx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      audioCtx = ctx;
+      const now = ctx.currentTime;
+      (ok ? [660, 990] : [330]).forEach((f, i) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = 'sine'; o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, now + i * 0.09);
+        g.gain.exponentialRampToValueAtTime(0.12, now + i * 0.09 + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.09 + 0.18);
+        o.connect(g).connect(ctx.destination);
+        o.start(now + i * 0.09); o.stop(now + i * 0.09 + 0.2);
+      });
+    } catch (e) {}
+  }
+
+  // ---- Live mic level → waveform, orb and button equaliser
+  async function startMeter() {
+    vc.classList.add('synthetic');
+    try {
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') await audioCtx.resume();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.75;
+      audioCtx.createMediaStreamSource(micStream).connect(analyser);
+      vc.classList.remove('synthetic');
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      const draw = () => {
+        analyser.getByteFrequencyData(data);
+        let sum = 0;
+        waveBars.forEach((b, k) => {
+          // mirror the voice band around the centre so it looks like a waveform
+          const idx = 2 + Math.round(Math.abs(k - WAVE_BARS / 2) * 1.6);
+          const v = Math.min(1, (data[idx] / 255) ** 1.4 * 1.5);
+          sum += v;
+          b.style.setProperty('--v', v.toFixed(3));
+        });
+        const lvl = Math.min(1, (sum / WAVE_BARS) * 2.2);
+        vc.style.setProperty('--lvl', lvl.toFixed(3));
+        eqBars.forEach((b, k) => b.style.setProperty('--v', Math.min(1, lvl * (0.6 + ((k * 37) % 5) / 6)).toFixed(3)));
+        rafId = requestAnimationFrame(draw);
+      };
+      draw();
+    } catch (e) {
+      // No level access — keep the synthetic wave so it still feels alive
+    }
+  }
+  function stopMeter() {
+    cancelAnimationFrame(rafId);
+    if (micStream) micStream.getTracks().forEach((tr) => tr.stop());
+    micStream = null; analyser = null;
+    vc.style.setProperty('--lvl', 0);
+    waveBars.forEach((b) => b.style.setProperty('--v', 0));
+    eqBars.forEach((b) => b.style.setProperty('--v', 0.15));
+  }
+
+  // Lower the briefing while the listener is talking, so the mic hears them — not the news
+  const duck = (on) => { clip.volume = on ? 0.25 : 1; };
 
   function setMic(on) {
     listening = on;
     $('#bpMic').classList.toggle('on', on);
+    $('#bpMic').setAttribute('aria-pressed', on);
     $('#micLabel').textContent = on ? L('Listening…', 'শুনছি…') : L('Voice commands', 'ভয়েস কমান্ড');
-    $('#bpHint').textContent = on
-      ? L('Say “next”, “previous”, “pause” or “play”.', 'বলুন “পরের খবর”, “আগের খবর”, “থামো” বা “শুরু করো”।')
-      : '';
-  }
-
-  function handleCommand(said) {
-    const s = said.toLowerCase();
-    if (/next|skip|পরের|পরে/.test(s)) step(1);
-    else if (/previous|back|আগের/.test(s)) step(-1);
-    else if (/stop|pause|থাম|বন্ধ/.test(s)) stopAudio();
-    else if (/play|start|resume|শুরু|চালাও|শোনাও/.test(s)) startAudio(cur < 0 ? 0 : cur);
+    vc.classList.toggle('open', on);
+    if (on) {
+      renderCmds();
+      setState(L('Listening…', 'শুনছি…'));
+      showHint(true);
+      vc.classList.remove('ok', 'miss');
+    }
   }
 
   function stopListening() {
-    if (rec) { rec.onend = null; try { rec.stop(); } catch (e) {} }
-    setMic(false);
+    if (rec) { rec.onend = null; try { rec.abort(); } catch (e) {} rec = null; }
+    clearTimeout(resetTimer);
+    duck(false);
+    stopMeter();
+    if (vc) setMic(false);
+  }
+
+  function micError(msg) {
+    stopListening();
+    $('#bpHint').textContent = msg;
+    setTimeout(() => { if (!listening) $('#bpHint').textContent = ''; }, 6000);
+  }
+
+  function startListening() {
+    $('#bpHint').textContent = '';
+    rec = new SR();
+    rec.lang = lang === 'bn' ? 'bn-BD' : 'en-US';
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.maxAlternatives = 3;
+
+    rec.onspeechstart = () => { duck(true); setState(L('Hearing you…', 'শুনতে পাচ্ছি…')); };
+    rec.onspeechend = () => duck(false);
+    rec.onresult = (e) => {
+      const r = e.results[e.results.length - 1];
+      if (!r.isFinal) {
+        const h = $('#vcHeard');
+        h.className = 'vc-heard interim';
+        h.textContent = r[0].transcript;
+        clearTimeout(resetTimer);
+        return;
+      }
+      duck(false);
+      setState(L('Listening…', 'শুনছি…'));
+      // Use the first alternative that matches a command
+      const alts = [...r].map((a) => a.transcript);
+      const hit = alts.find((a) => COMMANDS.some((c) => c.re.test(a.toLowerCase()))) || alts[0];
+      handleCommand(hit);
+    };
+    rec.onerror = (e) => {
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed')
+        micError(L('Microphone blocked — allow mic access in the address bar and try again.', 'মাইক্রোফোন বন্ধ—ঠিকানা বারে মাইকের অনুমতি দিয়ে আবার চেষ্টা করুন।'));
+      else if (e.error === 'audio-capture')
+        micError(L('No microphone found.', 'কোনো মাইক্রোফোন পাওয়া যায়নি।'));
+      else if (e.error === 'network')
+        micError(L('Voice commands need an internet connection.', 'ভয়েস কমান্ডের জন্য ইন্টারনেট সংযোগ লাগবে।'));
+    };
+    // Chrome stops after a pause — quietly restart while the mic is meant to be on
+    rec.onend = () => {
+      if (!listening || !rec) return;
+      setTimeout(() => { try { rec && rec.start(); } catch (e) {} }, 250);
+    };
+
+    try { rec.start(); } catch (e) { return; }
+    setMic(true);
+    startMeter();
   }
 
   $('#bpMic').addEventListener('click', () => {
@@ -439,16 +741,9 @@
       $('#bpHint').textContent = L('Voice commands need Chrome or Edge.', 'ভয়েস কমান্ডের জন্য Chrome বা Edge ব্যবহার করুন।');
       return;
     }
-    if (listening) { stopListening(); return; }
-    rec = new SR();
-    rec.lang = lang === 'bn' ? 'bn-BD' : 'en-US';
-    rec.continuous = true;
-    rec.interimResults = false;
-    rec.onresult = (e) => handleCommand(e.results[e.results.length - 1][0].transcript);
-    rec.onerror = (e) => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') stopListening(); };
-    rec.onend = () => { if (listening) { try { rec.start(); } catch (e) { setMic(false); } } };
-    try { rec.start(); setMic(true); } catch (e) {}
+    listening ? stopListening() : startListening();
   });
+  $('#vcClose').addEventListener('click', stopListening);
 
   /* ---------------- FIVE THAT MATTER ---------------- */
   let firstPaint = true;
