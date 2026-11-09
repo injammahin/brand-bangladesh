@@ -1187,10 +1187,42 @@
     if (e.key === 'Escape') { searchOv.classList.remove('open'); aiPanel.classList.remove('open'); closeModal(); }
   });
 
-  /* ---------------- STICKY NAV MINI LOGO ---------------- */
-  new IntersectionObserver(([entry]) => {
-    $('#mainnav').classList.toggle('stuck', !entry.isIntersecting);
-  }, { threshold: 0 }).observe($('#brand'));
+  /* ---------------- SMART HEADER ----------------
+     Scrolling down → only the nav bar (with mini logo) stays.
+     Scrolling up   → the full header slides back in. */
+  const head = $('#siteHead');
+  const measureHead = () => {
+    const collapse = $('.topbar').offsetHeight + $('.masthead').offsetHeight;
+    head.style.setProperty('--collapse', `${collapse}px`);
+    head.style.setProperty('--tk', `${$('.ticker').offsetHeight}px`);
+    head.style.setProperty('--tb', `${$('.topbar').offsetHeight}px`);
+  };
+  measureHead();
+  if ('ResizeObserver' in window) new ResizeObserver(measureHead).observe(head);
+  else window.addEventListener('resize', measureHead);
+
+  let lastY = window.scrollY, headTick = false;
+  const setCompact = (on) => {
+    head.classList.toggle('compact', on);
+  };
+  const onScroll = () => {
+    headTick = false;
+    const y = Math.max(0, window.scrollY);
+    const dy = y - lastY;
+    if (y < 12) setCompact(false);                // back at the very top
+    else if (dy > 6) setCompact(true);            // scrolling down
+    else if (dy < -6) setCompact(false);          // scrolling up
+    if (Math.abs(dy) > 6 || y < 12) lastY = y;
+    head.classList.toggle('floating', y > head.offsetHeight);
+    head.classList.toggle('peek', y >= 12); // top bar + ticker only at the very top of the page
+    // Small logo in the nav only when the big masthead logo is hidden
+    $('#mainnav').classList.toggle('stuck', head.classList.contains('compact'));
+  };
+  window.addEventListener('scroll', () => {
+    if (!headTick) { headTick = true; requestAnimationFrame(onScroll); }
+  }, { passive: true });
+  if (window.scrollY > head.offsetHeight) setCompact(true); // reloaded mid-page
+  onScroll();
 
   /* ---------------- REVEAL ON SCROLL ---------------- */
   const revealObs = new IntersectionObserver((entries) => {

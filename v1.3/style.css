@@ -147,8 +147,34 @@ body.lang-bn .tagline { font-size: 14px; }
 .btn-listen:hover { background: var(--hover); }
 
 /* ================= NAV ================= */
-.mainnav {
+/* Whole header sticks. Scrolling down → slide up and clip so only the nav bar shows;
+   scrolling up → the full header (top bar, masthead, nav, ticker) slides back in. */
+/* Only `transform` is animated (no clip-path): it runs on the GPU in perfect sync with
+   scrolling, so no gap can open above the header while it slides. */
+.site-head {
+  --head-ease: cubic-bezier(.4, 0, .2, 1);
   position: sticky; top: 0; z-index: 50;
+  transition: transform .75s var(--head-ease);
+  will-change: transform;
+}
+.site-head .topbar, .site-head .masthead, .site-head .ticker { background: #fff; }
+.site-head.compact { transform: translateY(calc(var(--collapse, 0px) * -1)); }
+/* Re-opened mid-page: logo masthead + nav bar slide down.
+   The top bar and the live ticker show only at the very top of the page. */
+.site-head.peek:not(.compact) { transform: translateY(calc(var(--tb, 0px) * -1)); }
+/* Ticker fades out under the nav when collapsed */
+.site-head .ticker { transition: opacity .5s var(--head-ease), visibility .5s, box-shadow .6s ease; }
+.site-head.compact .ticker, .site-head.peek .ticker { opacity: 0; visibility: hidden; }
+/* …and the empty space it leaves lets clicks through to the page */
+.site-head.compact, .site-head.peek { pointer-events: none; }
+.site-head.compact .mainnav, .site-head.peek .mainnav, .site-head.peek .masthead { pointer-events: auto; }
+/* Soft shadow under the nav bar while the header floats over the page */
+.site-head .mainnav { transition: box-shadow .6s ease; }
+.site-head.peek .mainnav { box-shadow: 0 10px 24px -14px rgba(17, 24, 39, .28); }
+@media (prefers-reduced-motion: reduce) { .site-head, .site-head .ticker { transition: none; } }
+
+.mainnav {
+  position: relative;
   background: rgba(255, 255, 255, .94); backdrop-filter: saturate(1.2) blur(12px);
   border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line);
 }
