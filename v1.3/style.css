@@ -25,7 +25,7 @@
   --accent: #D71920;
 
   /* Smriti Soudho mark, for decorative use in CSS */
-  --mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpolygon fill='%23D71920' points='14,112 48,56 36,112'/%3E%3Cpolygon fill='%23F38020' points='38,112 55,32 52,112'/%3E%3Cpolygon fill='%23FBC111' points='54,112 58,24 61,112'/%3E%3Cpolygon fill='%230E5B5C' points='63,112 60,12 65,12 69,112'/%3E%3Cpolygon fill='%23141414' points='68,26 84,58 71,62'/%3E%3Cpolygon fill='%23EE1B5B' points='71,66 88,62 104,112 72,112'/%3E%3Cpolygon fill='%23A4CB3A' points='66,4 88,52 84,54 67,18'/%3E%3C/svg%3E");
+  --mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 168'%3E%3Cpolygon fill='%23D71920' points='3,164 67,74 32,164'/%3E%3Cpolygon fill='%23F38020' points='39,164 80,41 72,164'/%3E%3Cpolygon fill='%23FBC111' points='77,164 84,30 93,164'/%3E%3Cpolygon fill='%230E5B5C' points='84,19 91,25 104,164 95,164'/%3E%3Cpolygon fill='%23141414' points='95,42 112,71 98,68'/%3E%3Cpolygon fill='%23141414' points='99,75 118,80 110,156 107,156'/%3E%3Cpolygon fill='%23EE1B5B' points='120,82 128,85 156,164 112,164'/%3E%3Cpolygon fill='%23A4CB3A' points='92,4 123,76 114,73 95,39'/%3E%3C/svg%3E");
 
   --f-head: 'Newsreader', Georgia, 'Times New Roman', serif;
   --f-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
